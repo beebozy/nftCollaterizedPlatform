@@ -22,6 +22,27 @@ library LibDiamond {
         uint16 facetAddressPosition; // position of facetAddress in facetAddresses array
     }
 
+struct Loan {
+        address borrower;
+        uint256 amount;
+        uint256 startTime;
+        uint256 endTime;
+        uint256 collateralTokenId;
+        address collateralTokenAddress;
+        bool repaid;
+
+        int256 public constant MIN_LOAN_DURATION = 2 hours;
+    uint256 public constant MAX_LOAN_DURATION = 365 days;
+    uint256 public constant INTEREST_RATE = 5; // 5% interest per year
+
+    
+
+    // Track active loans and lender balances (principal + interest)
+    mapping(uint256 => Loan) public loans;
+    mapping(address => uint256) public lenderBalances;
+    uint256 public nextLoanId;
+    }
+
     struct DiamondStorage {
         // maps function selector to the facet address and
         // the position of the selector in the facetFunctionSelectors.selectors array
@@ -35,6 +56,17 @@ library LibDiamond {
         mapping(bytes4 => bool) supportedInterfaces;
         // owner of the contract
         address contractOwner;
+
+         bool isTokenInitialized;
+        string _name;
+        // Token symbol
+        string _symbol;
+        mapping(uint256  => address) _owners;
+        mapping(address  => uint256) _balances;
+        mapping(uint256  => address) _tokenApprovals;
+        mapping(address  => mapping(address => bool)) _operatorApprovals;
+
+
     }
 
     function diamondStorage() internal pure returns (DiamondStorage storage ds) {
